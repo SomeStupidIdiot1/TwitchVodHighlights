@@ -2,6 +2,7 @@
   "name": "twitchhighlightsfinder",
   "version": "0.1.0",
   "private": true,
+  "main": "main.js",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
@@ -9,8 +10,10 @@
     "axios": "^0.19.2",
     "child_process": "^1.0.2",
     "dotenv": "^8.2.0",
+    "electron-is-dev": "^1.2.0",
     "fs": "0.0.1-security",
     "nodeplotlib": "^0.6.5",
+    "path": "^0.12.7",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
@@ -20,7 +23,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron": "electron ."
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -39,5 +43,6 @@
   },
   "devDependencies": {
     "electron": "^9.1.0"
-  }
+  },
+  "homepage": "./"
 }
