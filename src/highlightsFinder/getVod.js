@@ -1,11 +1,11 @@
 // For getting info from twitch api
-const axios = require("axios");
+import axios from "axios";
 // For making a new video file
-const fs = require("fs");
+import fs from "fs";
 // For making a temporary directory
-const tmp = require("tmp");
+import tmp from "tmp";
 // For executing a ffmpeg command
-const { exec } = require("child_process");
+import { exec } from "child_process";
 // Used to access twitch api
 const config = { headers: { "Client-ID": "kimne78kx3ncx6brgo4mv6wki5h1ko" } };
 
@@ -175,12 +175,12 @@ const getPlaylistInfo = async (startTime, endTime, playlistUrl) => {
   return { info, startCropTime, length };
 };
 // Getting all the qualities of the video
-const getQualities = async (videoId) => {
+export const getQualities = async (videoId) => {
   const playlists = await getPlaylists(videoId);
   return Object.keys(playlists);
 };
 // Where everything comes together and a final video is produced
-const getVideo = async (
+export const getVideo = async (
   videoId,
   startTime = 0,
   endTime = 100000000,
@@ -207,7 +207,7 @@ const getVideo = async (
 
   // Getting all the video clips
   let promises = [];
-  for (item of info) {
+  for (let item of info) {
     const { name, fileIndex } = item;
     promises.push(
       getVideoClip(baseUrl + `/${name}`, `${path}/${fileIndex}.ts`)
@@ -237,5 +237,3 @@ const getVideo = async (
   console.log("Succesfully removed temp folder.");
   return videoFileName;
 };
-
-module.exports = { getVideo, getQualities };

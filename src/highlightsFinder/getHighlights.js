@@ -1,5 +1,5 @@
 // Get chat speed in messages/second
-const getChatSpeed = (simpleComments, timeInterval = 4) => {
+export const getChatSpeed = (simpleComments, timeInterval = 4) => {
   if (timeInterval <= 0) timeInterval = 2;
   timeInterval = Math.ceil(timeInterval);
   const times = simpleComments.map(({ offset_seconds }) => offset_seconds);
@@ -77,4 +77,3 @@ const getChatSpeed = (simpleComments, timeInterval = 4) => {
     topSpeeds: filteredTopSpeeds,
   };
 };
-module.exports = { getChatSpeed };

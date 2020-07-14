@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from "axios";
 const config = { headers: { "Client-ID": "kimne78kx3ncx6brgo4mv6wki5h1ko" } };
 
 // This is used to get the first few comments based on time
@@ -24,7 +24,7 @@ const getNext = async (videoId, cursor) => {
   return data;
 };
 // This combines a lot of comments together based on time
-const getCommentsJson = async (
+export const getCommentsJson = async (
   videoId,
   startInSeconds = 0,
   endInSeconds = 1000000000
@@ -56,7 +56,7 @@ const getCommentsJson = async (
   return comments;
 };
 // Only includes display name, the message, and the time
-const getSimpleComments = async (
+export const getSimpleComments = async (
   videoId,
   startInSeconds = 0,
   endInSeconds = 1000000000
@@ -68,4 +68,3 @@ const getSimpleComments = async (
     offset_seconds: item.content_offset_seconds,
   }));
 };
-module.exports = { getCommentsJson, getSimpleComments };
