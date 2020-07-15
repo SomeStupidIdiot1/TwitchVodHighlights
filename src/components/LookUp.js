@@ -4,39 +4,33 @@ import { getVodInfo } from "../twitchAPI/getVodInfo";
 
 const LookUp = () => {
   const [urls, setUrls] = React.useState("");
-  const [vodData, setVodData] = React.useState({});
+  const [vodData, setVodData] = React.useState([]);
   const [errs, setErrs] = React.useState([]);
   const lookUp = () => {
-    setVodData({});
-    setErrs([]);
-    urls
-      .split("\n")
-      .map((url) => {
-        url = url.trim();
-        if (!isNaN(url)) return url;
-        for (let splitItem of url.split("/")) {
-          if (splitItem.trim() !== "" && !isNaN(splitItem))
-            return splitItem.trim();
-        }
-        setErrs(errs.concat(`Bad format: ${url}`));
-        return "";
-      })
-      .forEach((id) => {
-        if (id !== "") {
-          getVodInfo(id)
-            .then((data) => {
-              console.log(data);
-              setVodData({ ...vodData, id: data });
-            })
-            .catch(() =>
-              setErrs(
-                errs.concat(
-                  `Unable to get ${id}. Likely invalid or inaccessible.`
-                )
-              )
-            );
-        }
-      });
+    const newVodData = [];
+    const newErrs = [];
+    // https://www.twitch.tv/videos/679365428
+    new Set(
+      urls
+        .split("\n")
+        .map((url) => {
+          url = url.trim();
+          if (!isNaN(url)) return url;
+          for (let splitItem of url.split("/")) {
+            if (splitItem.trim() !== "" && !isNaN(splitItem))
+              return splitItem.trim();
+          }
+          newErrs.push(`Bad format: ${url}`);
+          return "";
+        })
+        .filter((id) => id !== "")
+    ).forEach((id) => {
+      newVodData.push(getVodInfo(id).catch((e) => newErrs.push(e)));
+    });
+    Promise.all(newVodData).then((data) => {
+      setVodData(data.filter((item) => item instanceof Object));
+      setErrs(newErrs);
+    });
   };
   return (
     <Container>
@@ -55,8 +49,14 @@ const LookUp = () => {
       <Button variant="contained" color="primary" onClick={lookUp}>
         Look up URLs
       </Button>
-      <div>{JSON.stringify(vodData)}</div>
-      <div>{errs.length && errs[0]}</div>
+      {vodData.map((data) => (
+        <Typography key={data._id}>
+          <b>{data.channel.display_name}:</b> {data.title}
+        </Typography>
+      ))}
+      {errs.map((e) => (
+        <Typography key={e.id}>{e.message}</Typography>
+      ))}
     </Container>
   );
 };
