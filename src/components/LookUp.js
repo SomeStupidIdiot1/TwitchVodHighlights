@@ -24,11 +24,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const LookUp = () => {
+  const pastVodData = JSON.parse(window.localStorage.getItem("pastVodData"));
   const classes = useStyles();
   const [urls, setUrls] = React.useState("");
-  const [vodData, setVodData] = React.useState([]);
+  const [vodData, setVodData] = React.useState(pastVodData ? pastVodData : []);
   const [errs, setErrs] = React.useState([]);
-  const [checked, setChecked] = React.useState([]);
+  const [checked, setChecked] = React.useState(
+    pastVodData ? new Array(pastVodData.length).fill(true) : []
+  );
   const lookUp = () => {
     setChecked([]);
     const newVodData = [];
@@ -51,15 +54,42 @@ const LookUp = () => {
       newVodData.push(getVodInfo(id).catch((e) => newErrs.push(e.message)));
     });
     Promise.all(newVodData).then((data) => {
-      setVodData(data.filter((item) => item instanceof Object));
+      const filteredData = vodData.concat(
+        data.filter((item) => item instanceof Object)
+      );
+      const removedDuplicates = [];
+      for (let i = 0; i < filteredData.length; i++) {
+        let hasDuplicate = false;
+        for (let j = i + 1; j < filteredData.length; j++) {
+          if (filteredData[i]._id === filteredData[j]._id) {
+            hasDuplicate = true;
+            break;
+          }
+        }
+        if (!hasDuplicate) removedDuplicates.push(filteredData[i]);
+      }
+      setVodData(removedDuplicates);
+      window.localStorage.setItem(
+        "pastVodData",
+        JSON.stringify(removedDuplicates)
+      );
       setErrs(newErrs);
-      setChecked(new Array(data.length).fill(true));
+      setChecked(new Array(removedDuplicates.length).fill(true));
     });
   };
   const handleCheckbox = (index) => () => {
     const tmp = [...checked];
     tmp[index] = !tmp[index];
     setChecked(tmp);
+  };
+  const handleDelete = () => {
+    const newVodData = [];
+    for (let i = 0; i < checked.length; i++) {
+      if (!checked[i]) newVodData.push(vodData[i]);
+    }
+    setVodData(newVodData);
+    setChecked(new Array(newVodData.length).fill(false));
+    window.localStorage.setItem("pastVodData", JSON.stringify(newVodData));
   };
   return (
     <Container maxWidth="md">
@@ -123,6 +153,14 @@ const LookUp = () => {
                   </ListItem>
                 ))}
               </List>
+              <br />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleDelete}
+              >
+                Delete
+              </Button>
             </>
           )}
         </Grid>
