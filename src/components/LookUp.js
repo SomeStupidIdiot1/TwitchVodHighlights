@@ -14,12 +14,26 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import { getVodInfo } from "../twitchAPI/getVodInfo";
+
 const useStyles = makeStyles((theme) => ({
-  list: {
+  vods: {
     backgroundColor: theme.palette.background.paper,
   },
-  title: {
-    margin: theme.spacing(1, 0),
+  description: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+  },
+  errs: {
+    backgroundColor: theme.palette.background.paper,
+  },
+  deleteButton: {
+    background: theme.palette.primary.light,
+  },
+  downloadButton: {
+    marginRight: theme.spacing(2),
+  },
+  textField: {
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -91,21 +105,29 @@ const LookUp = () => {
     setChecked(new Array(newVodData.length).fill(false));
     window.localStorage.setItem("pastVodData", JSON.stringify(newVodData));
   };
+  const handleDownload = () => {};
   return (
     <Container maxWidth="md">
       <CssBaseline />
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h5" component="h3" className={classes.title}>
-            Put each twitch vod URL or twitch vod ID on a new line
+          <Typography
+            variant="p"
+            component="h3"
+            className={classes.description}
+          >
+            This is used to get the metadata of a twitch vod. On each new line,
+            put a twitch vod URL or twitch vod ID.
           </Typography>
           <TextField
             multiline
             rowsMax={10}
             rows={4}
+            color="secondary"
             variant="outlined"
             label="URLs"
             fullWidth
+            className={classes.textField}
             onChange={(e) => setUrls(e.target.value)}
           />
           <Button
@@ -120,15 +142,14 @@ const LookUp = () => {
         <Grid item xs={12}>
           {vodData.length !== 0 && (
             <>
-              <List className={classes.list}>
+              <List className={classes.vods}>
                 <ListItem>
                   <ListItemText
                     primary={
-                      <Typography color="primary">
+                      <Typography color="secondary">
                         <b>Vods</b>
                       </Typography>
                     }
-                    color="primary"
                   />
                 </ListItem>
                 {vodData.map((data, index) => (
@@ -157,6 +178,14 @@ const LookUp = () => {
               <Button
                 variant="contained"
                 color="primary"
+                onClick={handleDownload}
+                className={classes.downloadButton}
+              >
+                Download metadata
+              </Button>
+              <Button
+                className={classes.deleteButton}
+                variant="contained"
                 onClick={handleDelete}
               >
                 Delete
@@ -164,16 +193,24 @@ const LookUp = () => {
             </>
           )}
         </Grid>
-        <Grid item>
+        <Grid item xs={12}>
           {errs.length !== 0 && (
-            <>
-              <Typography component="h3" variant="h5">
-                Errors
-              </Typography>{" "}
+            <List className={classes.errs}>
+              <ListItem>
+                <ListItemText
+                  primary={
+                    <Typography color="error">
+                      <b>Failed to get the following vods</b>
+                    </Typography>
+                  }
+                />
+              </ListItem>
               {errs.map((msg) => (
-                <Typography key={msg}> {msg}</Typography>
+                <ListItem key={msg}>
+                  <Typography>{msg}</Typography>
+                </ListItem>
               ))}
-            </>
+            </List>
           )}
         </Grid>
       </Grid>

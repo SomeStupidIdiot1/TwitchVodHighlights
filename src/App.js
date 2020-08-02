@@ -1,5 +1,8 @@
 import React from "react";
 import LookUp from "./components/LookUp";
+import DownloadVod from "./components/DownloadVod";
+import DownloadChat from "./components/DownloadChat";
+import GetHighlights from "./components/GetHighlights";
 import theme from "./theme";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { AppBar, Tabs, Tab } from "@material-ui/core";
@@ -20,6 +23,9 @@ function App() {
         </Tabs>
       </AppBar>
       {currTab === 0 && <LookUp />}
+      {currTab === 1 && <DownloadVod />}
+      {currTab === 2 && <DownloadChat />}
+      {currTab === 3 && <GetHighlights />}
     </ThemeProvider>
   );
 }

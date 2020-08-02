@@ -7,7 +7,7 @@ export const getVodInfo = async (id) => {
     const { data } = await axios.get(url, config);
     return data;
   } catch (e) {
-    throw new BadIdError(`Could not get the vod at twitch.tv/videos/${id}`, id);
+    throw new BadIdError(`twitch.tv/videos/${id}`, id);
   }
 };
 export class BadIdError extends Error {
