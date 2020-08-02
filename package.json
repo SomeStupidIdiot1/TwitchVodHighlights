@@ -12,6 +12,7 @@
     "child_process": "^1.0.2",
     "dotenv": "^8.2.0",
     "electron-is-dev": "^1.2.0",
+    "file-saver": "^2.0.2",
     "fs": "0.0.1-security",
     "material-ui-colors": "^1.0.0",
     "nodeplotlib": "^0.6.5",

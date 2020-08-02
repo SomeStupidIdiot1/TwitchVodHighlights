@@ -14,6 +14,7 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import { getVodInfo } from "../twitchAPI/getVodInfo";
+import { saveAs } from "file-saver";
 
 const useStyles = makeStyles((theme) => ({
   vods: {
@@ -105,7 +106,14 @@ const LookUp = () => {
     setChecked(new Array(newVodData.length).fill(false));
     window.localStorage.setItem("pastVodData", JSON.stringify(newVodData));
   };
-  const handleDownload = () => {};
+  const handleDownload = () => {
+    saveAs(
+      new Blob([JSON.stringify(vodData)], {
+        type: "text/plain;charset=utf-8",
+      }),
+      "vodsMetadata.json"
+    );
+  };
   return (
     <Container maxWidth="md">
       <CssBaseline />
