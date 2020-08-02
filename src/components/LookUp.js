@@ -112,12 +112,14 @@ const LookUp = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography
-            variant="p"
+            variant="body1"
             component="h3"
             className={classes.description}
           >
-            This is used to get the metadata of a twitch vod. On each new line,
-            put a twitch vod URL or twitch vod ID.
+            <b>
+              This is used to get the metadata of a twitch vod. On each new
+              line, put a twitch vod URL or twitch vod ID.
+            </b>
           </Typography>
           <TextField
             multiline
