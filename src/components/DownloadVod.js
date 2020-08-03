@@ -40,6 +40,19 @@ const useStyles = makeStyles((theme) => ({
     width: 30,
     backgroundColor: theme.palette.primary.main,
   },
+  downloadButton: {
+    marginRight: theme.spacing(2),
+  },
+  buttonTimeChange: {
+    background: theme.palette.primary.light,
+    marginRight: theme.spacing(2),
+  },
+  instructionsButton: {
+    marginBottom: theme.spacing(1),
+  },
+  instructions: {
+    marginLeft: theme.spacing(1),
+  },
 }));
 const DownloadVod = () => {
   const initialId = window.localStorage.getItem("downloadVodLookUpId");
@@ -48,9 +61,13 @@ const DownloadVod = () => {
   const [err, setErr] = React.useState("");
   const [title, setTitle] = React.useState("");
   const [author, setAuthor] = React.useState("");
-  const [timeSelected, setTimeSelected] = React.useState([0]);
+  const [timeSelected, setTimeSelected] = React.useState("");
+  const [totalVodSelections, setTotalVodSelections] = React.useState(1);
+  const [showInstructions, setShowInstructions] = React.useState(false);
   const lookUp = () => {
     let id = "";
+    setAuthor("");
+    setTitle("");
     for (const splitItem of url.trim().split("/"))
       if (splitItem.trim() !== "" && !isNaN(splitItem)) id = splitItem.trim();
     if (id === "") setErr(`Input is badly formatted`);
@@ -63,6 +80,15 @@ const DownloadVod = () => {
         })
         .catch((e) => setErr(`Could not access ${e.message}`));
     }
+  };
+  const handleDownload = (combined) => () => {};
+  const handleAddTime = () => {
+    setTotalVodSelections(totalVodSelections + 1);
+  };
+  const handleKeyPress = (e) => {
+    
+    console.log(timeSelected.charAt(0));
+    if (author !== "" && !isNaN(timeSelected.charAt(0))) console.log(e.key);
   };
   return (
     <Container maxWidth="md">
@@ -83,11 +109,7 @@ const DownloadVod = () => {
             fullWidth
             value={url}
             className={classes.textField}
-            onChange={(e) => {
-              setUrl(e.target.value);
-              setTitle("");
-              setAuthor("");
-            }}
+            onChange={(e) => setUrl(e.target.value)}
           />
           <Button
             variant="contained"
@@ -105,27 +127,37 @@ const DownloadVod = () => {
                 <b>{author}</b>: {title}
               </Typography>
               <br />
-              <Typography component="h3" variant="subtitle1">
-                Specify the time range of the vod to be downloaded.
-              </Typography>
-              <Typography component="h3" variant="subtitle1">
-                Use TAB or click on the specific time cell to highlight it, then
-                type in the number that you want.
-              </Typography>
-              <Typography component="h3" variant="subtitle1">
-                Hours are limited from 0 to 99, with minutes and seconds being
-                limited from 0 to 59.
-              </Typography>
-              <Typography component="h3" variant="subtitle1">
-                If the time chosen is too long, then it will just go all the way
-                to the end of the vod.
-              </Typography>
-              <Typography component="h3" variant="subtitle1">
-                It is in the format of <b>hours : minutes : seconds</b>.
-              </Typography>
+              <Button
+                className={classes.instructionsButton}
+                onClick={() => setShowInstructions(!showInstructions)}
+                color="secondary"
+                variant="contained"
+              >
+                {showInstructions ? "Hide" : "Show"} instructions and settings
+              </Button>
+              {showInstructions && (
+                <div className={classes.instructions}>
+                  <Typography component="h3" variant="subtitle1">
+                    Specify the time range of the vod in the format of{" "}
+                    <b>hours : minutes : seconds</b>.
+                  </Typography>
+                  <Typography component="h3" variant="subtitle1">
+                    Use <b>Tab</b> or <b>click on the specific time cell</b>,
+                    then type in the number that you want.
+                  </Typography>
+                  <Typography component="h3" variant="subtitle1">
+                    Hours are limited from 0 to 99, with minutes and seconds
+                    being limited from 0 to 59.
+                  </Typography>
+                  <Typography component="h3" variant="subtitle1">
+                    If the time chosen is too long, then it will just go all the
+                    way to the end of the vod.
+                  </Typography>
+                </div>
+              )}
               <div className={classes.timePicker}>
                 <List>
-                  {timeSelected.map((val, index) => {
+                  {new Array(totalVodSelections).fill().map((_, index) => {
                     return (
                       <ListItem key={index} className={classes.listItem}>
                         <IconButton
@@ -145,22 +177,17 @@ const DownloadVod = () => {
                                       {subIndex === 0 && "From "}
                                       {subIndex === 3 && " to "}
                                       <span
+                                        onKeyDown={handleKeyPress}
                                         className={
-                                          val === subIndex
+                                          timeSelected === `${index}${subIndex}`
                                             ? classes.timeDisplay
                                             : {}
                                         }
-                                        onClick={() => {
-                                          const copy = [...timeSelected];
-                                          copy[index] = subIndex;
-                                          setTimeSelected(copy);
-                                        }}
-                                        onFocus={() => {
-                                          const copy = [...timeSelected];
-                                          copy[index] = subIndex;
-                                          setTimeSelected(copy);
-                                        }}
-                                        tabIndex={subIndex}
+                                        onFocus={() =>
+                                          setTimeSelected(`${index}${subIndex}`)
+                                        }
+                                        onBlur={() => setTimeSelected("")}
+                                        tabIndex={index * 6 + subIndex + 1}
                                       >
                                         00
                                       </span>
@@ -176,6 +203,33 @@ const DownloadVod = () => {
                     );
                   })}
                 </List>
+                <br />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleDownload(false)}
+                  className={classes.downloadButton}
+                  tabIndex={6 * totalVodSelections + 2}
+                >
+                  Download Separately
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleDownload(true)}
+                  className={classes.downloadButton}
+                  tabIndex={6 * totalVodSelections + 3}
+                >
+                  Download Combined
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleAddTime}
+                  className={classes.buttonTimeChange}
+                  tabIndex={6 * totalVodSelections + 4}
+                >
+                  Add another time range
+                </Button>
               </div>
             </div>
           </Grid>
