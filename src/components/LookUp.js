@@ -168,7 +168,7 @@ const LookUp = () => {
                     <ListItemIcon>
                       <Checkbox
                         edge="start"
-                        checked={!!checked[index]}
+                        checked={checked[index]}
                         tabIndex={-1}
                         disableRipple
                       />
