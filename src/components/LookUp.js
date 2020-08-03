@@ -124,10 +124,7 @@ const LookUp = () => {
             component="h3"
             className={classes.description}
           >
-            <b>
-              This is used to get the metadata of a twitch vod. On each new
-              line, put a twitch vod URL or twitch vod ID.
-            </b>
+            <b>This is used to get the metadata of twitch vods.</b>
           </Typography>
           <TextField
             multiline
@@ -135,7 +132,7 @@ const LookUp = () => {
             rows={4}
             color="secondary"
             variant="outlined"
-            label="URLs"
+            label="On each new line, put a twitch vod URL or twitch vod ID."
             fullWidth
             className={classes.textField}
             onChange={(e) => setUrls(e.target.value)}
@@ -146,7 +143,7 @@ const LookUp = () => {
             onClick={lookUp}
             fullWidth
           >
-            Look up URLs
+            Look up
           </Button>
         </Grid>
         <Grid item xs={12}>
