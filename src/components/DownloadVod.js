@@ -16,7 +16,6 @@ import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
 import { getVodInfo } from "../twitchAPI/getVodInfo";
 import { makeStyles } from "@material-ui/core/styles";
-import { amber } from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({
   displayVodInfo: {
@@ -39,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
   timeDisplay: {
     width: 30,
-    backgroundColor: amber[200],
+    backgroundColor: theme.palette.info.main,
   },
   downloadButton: {
     marginRight: theme.spacing(2),

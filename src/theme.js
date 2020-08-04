@@ -16,5 +16,8 @@ export default createMuiTheme({
     error: {
       main: "#b71c1c",
     },
+    info: {
+      main: "#bf360c",
+    },
   },
 });
