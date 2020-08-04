@@ -100,8 +100,8 @@ const LookUp = () => {
   };
   const handleDelete = () => {
     const newVodData = [];
-    for (let i = 0; i < checked.length; i++) {
-      if (!checked[i]) newVodData.push(vodData[i]);
+    for (let i = 0; i < vodData.length; i++) {
+      if (checked.indexOf(vodData[i]._id) === -1) newVodData.push(vodData[i]);
     }
     setVodData(newVodData);
     setChecked(new Array(newVodData.length).fill(false));

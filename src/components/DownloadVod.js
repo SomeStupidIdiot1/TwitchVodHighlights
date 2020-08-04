@@ -62,7 +62,6 @@ const DownloadVod = () => {
   const [title, setTitle] = React.useState("");
   const [author, setAuthor] = React.useState("");
   const [timeSelected, setTimeSelected] = React.useState("");
-  const [totalVodSelections, setTotalVodSelections] = React.useState(1);
   const [showInstructions, setShowInstructions] = React.useState(false);
   const [allTimes, setAllTimes] = React.useState([
     ["00", "00", "00", "00", "00", "00"],
@@ -86,7 +85,6 @@ const DownloadVod = () => {
   };
   const handleDownload = (combined) => () => {};
   const handleAddTime = () => {
-    setTotalVodSelections(totalVodSelections + 1);
     setAllTimes(allTimes.concat([["00", "00", "00", "00", "00", "00"]]));
   };
   const handleKeyPress = (e) => {
@@ -113,7 +111,6 @@ const DownloadVod = () => {
     const allTimesCopy = [...allTimes];
     allTimesCopy.splice(index, 1);
     setAllTimes(allTimesCopy);
-    setTotalVodSelections(totalVodSelections - 1);
   };
   return (
     <Container maxWidth="md">
@@ -183,7 +180,7 @@ const DownloadVod = () => {
               )}
               <div className={classes.timePicker}>
                 <List>
-                  {new Array(totalVodSelections).fill().map((_, index) => {
+                  {new Array(allTimes.length).fill().map((_, index) => {
                     return (
                       <ListItem key={index} className={classes.listItem}>
                         <IconButton
@@ -235,7 +232,7 @@ const DownloadVod = () => {
                   color="primary"
                   onClick={handleDownload(false)}
                   className={classes.downloadButton}
-                  tabIndex={6 * totalVodSelections + 2}
+                  tabIndex={6 * allTimes.length + 2}
                 >
                   Download Separately
                 </Button>
@@ -244,7 +241,7 @@ const DownloadVod = () => {
                   color="primary"
                   onClick={handleDownload(true)}
                   className={classes.downloadButton}
-                  tabIndex={6 * totalVodSelections + 3}
+                  tabIndex={6 * allTimes.length + 3}
                 >
                   Download Combined
                 </Button>
@@ -253,7 +250,7 @@ const DownloadVod = () => {
                   onClick={handleAddTime}
                   color="primary"
                   className={classes.buttonTimeChange}
-                  tabIndex={6 * totalVodSelections + 4}
+                  tabIndex={6 * allTimes.length + 4}
                 >
                   Add another time range
                 </Button>
