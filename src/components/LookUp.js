@@ -154,7 +154,7 @@ const LookUp = () => {
                 <ListItem>
                   <ListItemText
                     primary={
-                      <Typography color="secondary">
+                      <Typography>
                         <b>Vods</b>
                       </Typography>
                     }
