@@ -1,5 +1,5 @@
 import { createMuiTheme } from "@material-ui/core/styles";
-import { grey, amber } from "@material-ui/core/colors";
+import { grey } from "@material-ui/core/colors";
 
 export default createMuiTheme({
   palette: {
@@ -8,11 +8,10 @@ export default createMuiTheme({
       paper: grey[100],
     },
     primary: {
-      main: "#ffb300",
-      light: amber[200],
+      main: "#7e5dc0",
     },
     secondary: {
-      main: "#7e5dc0",
+      main: "#bf360c",
     },
     error: {
       main: "#b71c1c",

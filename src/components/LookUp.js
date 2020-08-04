@@ -27,9 +27,6 @@ const useStyles = makeStyles((theme) => ({
   errs: {
     backgroundColor: theme.palette.background.paper,
   },
-  deleteButton: {
-    background: theme.palette.primary.light,
-  },
   downloadButton: {
     marginRight: theme.spacing(2),
   },
@@ -92,10 +89,14 @@ const LookUp = () => {
       setChecked(new Array(removedDuplicates.length).fill(true));
     });
   };
-  const handleCheckbox = (index) => () => {
-    const tmp = [...checked];
-    tmp[index] = !tmp[index];
-    setChecked(tmp);
+  const handleCheckbox = (value) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) newChecked.push(value);
+    else newChecked.splice(currentIndex, 1);
+
+    setChecked(newChecked);
   };
   const handleDelete = () => {
     const newVodData = [];
@@ -163,12 +164,12 @@ const LookUp = () => {
                   <ListItem
                     button
                     key={data._id}
-                    onClick={handleCheckbox(index)}
+                    onClick={handleCheckbox(data._id)}
                   >
                     <ListItemIcon>
                       <Checkbox
                         edge="start"
-                        checked={checked[index]}
+                        checked={checked.indexOf(data._id) !== -1}
                         tabIndex={-1}
                         disableRipple
                       />
@@ -191,9 +192,9 @@ const LookUp = () => {
                 Download metadata
               </Button>
               <Button
-                className={classes.deleteButton}
                 variant="contained"
                 onClick={handleDelete}
+                color="primary"
               >
                 Delete
               </Button>

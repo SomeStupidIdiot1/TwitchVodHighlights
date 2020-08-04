@@ -16,6 +16,7 @@ import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
 import { getVodInfo } from "../twitchAPI/getVodInfo";
 import { makeStyles } from "@material-ui/core/styles";
+import { amber } from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({
   displayVodInfo: {
@@ -38,13 +39,12 @@ const useStyles = makeStyles((theme) => ({
   },
   timeDisplay: {
     width: 30,
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: amber[200],
   },
   downloadButton: {
     marginRight: theme.spacing(2),
   },
   buttonTimeChange: {
-    background: theme.palette.primary.light,
     marginRight: theme.spacing(2),
   },
   instructionsButton: {
@@ -64,6 +64,9 @@ const DownloadVod = () => {
   const [timeSelected, setTimeSelected] = React.useState("");
   const [totalVodSelections, setTotalVodSelections] = React.useState(1);
   const [showInstructions, setShowInstructions] = React.useState(false);
+  const [allTimes, setAllTimes] = React.useState([
+    ["00", "00", "00", "00", "00", "00"],
+  ]);
   const lookUp = () => {
     let id = "";
     setAuthor("");
@@ -84,11 +87,33 @@ const DownloadVod = () => {
   const handleDownload = (combined) => () => {};
   const handleAddTime = () => {
     setTotalVodSelections(totalVodSelections + 1);
+    setAllTimes(allTimes.concat([["00", "00", "00", "00", "00", "00"]]));
   };
   const handleKeyPress = (e) => {
-    
-    console.log(timeSelected.charAt(0));
-    if (author !== "" && !isNaN(timeSelected.charAt(0))) console.log(e.key);
+    if (author !== "" && timeSelected !== "" && !isNaN(e.key)) {
+      const currValue = allTimes[timeSelected[0]][timeSelected[1]];
+      let newValue = "";
+      let intValue = parseInt(e.key);
+      newValue =
+        timeSelected[1] === "0" || timeSelected[1] === "3"
+          ? `${currValue[1]}${intValue}`
+          : parseInt(currValue[1]) >= 6
+          ? `0${intValue}`
+          : `${currValue[1]}${intValue}`;
+
+      const copy = [...allTimes];
+      const copy2 = [...copy[timeSelected[0]]];
+      copy2[timeSelected[1]] = newValue;
+      copy[timeSelected[0]] = copy2;
+      setAllTimes(copy);
+    }
+  };
+  const handleDelete = (index) => () => {
+    if (allTimes.length === 1) return;
+    const allTimesCopy = [...allTimes];
+    allTimesCopy.splice(index, 1);
+    setAllTimes(allTimesCopy);
+    setTotalVodSelections(totalVodSelections - 1);
   };
   return (
     <Container maxWidth="md">
@@ -132,6 +157,7 @@ const DownloadVod = () => {
                 onClick={() => setShowInstructions(!showInstructions)}
                 color="secondary"
                 variant="contained"
+                tabIndex={-1}
               >
                 {showInstructions ? "Hide" : "Show"} instructions and settings
               </Button>
@@ -161,9 +187,9 @@ const DownloadVod = () => {
                     return (
                       <ListItem key={index} className={classes.listItem}>
                         <IconButton
-                          onClick={() => {}}
                           fontSize="large"
                           tabIndex={-1}
+                          onClick={handleDelete(index)}
                         >
                           <DeleteOutlinedIcon />
                         </IconButton>
@@ -189,7 +215,7 @@ const DownloadVod = () => {
                                         onBlur={() => setTimeSelected("")}
                                         tabIndex={index * 6 + subIndex + 1}
                                       >
-                                        00
+                                        {allTimes[index][subIndex]}
                                       </span>
                                       {subIndex !== 2 && subIndex !== 5 && ":"}
                                     </React.Fragment>
@@ -225,6 +251,7 @@ const DownloadVod = () => {
                 <Button
                   variant="contained"
                   onClick={handleAddTime}
+                  color="primary"
                   className={classes.buttonTimeChange}
                   tabIndex={6 * totalVodSelections + 4}
                 >
