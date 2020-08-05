@@ -175,12 +175,12 @@ const getPlaylistInfo = async (startTime, endTime, playlistUrl) => {
   return { info, startCropTime, length };
 };
 // Getting all the qualities of the video
-export const getQualities = async (videoId) => {
+const getQualities = async (videoId) => {
   const playlists = await getPlaylists(videoId);
   return Object.keys(playlists);
 };
 // Where everything comes together and a final video is produced
-export const getVideo = async (
+const getVideo = async (
   videoId,
   startTime = 0,
   endTime = 100000000,
@@ -237,3 +237,4 @@ export const getVideo = async (
   console.log("Succesfully removed temp folder.");
   return videoFileName;
 };
+module.exports = { getQualities, getVideo };

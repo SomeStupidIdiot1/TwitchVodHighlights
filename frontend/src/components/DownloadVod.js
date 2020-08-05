@@ -11,11 +11,15 @@ import {
   ListItemText,
   ListItem,
   IconButton,
+  Select,
+  FormControl,
+  MenuItem,
+  FormHelperText,
 } from "@material-ui/core";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
-import { getVodInfo } from "../services/vod";
+import { getVodInfo, getQualities } from "../services/vod";
 
 const useStyles = makeStyles((theme) => ({
   displayVodInfo: {
@@ -65,6 +69,8 @@ const DownloadVod = () => {
   const [allTimes, setAllTimes] = React.useState([
     ["00", "00", "00", "00", "00", "00"],
   ]);
+  const [qualities, setQualities] = React.useState([]);
+  const [selectedQuality, setSelectedQuality] = React.useState("");
   const lookUp = () => {
     let id = "";
     setAuthor("");
@@ -78,6 +84,11 @@ const DownloadVod = () => {
           setAuthor(data.channel.display_name);
           setTitle(data.title);
           window.localStorage.setItem("downloadVodLookUpId", id);
+          return getQualities(id);
+        })
+        .then((qualities) => {
+          setQualities(qualities);
+          setSelectedQuality(qualities[0]);
         })
         .catch((e) => setErr(`Could not access ${e.message}`));
     }
@@ -175,6 +186,23 @@ const DownloadVod = () => {
                     If the time chosen is too long, then it will just go all the
                     way to the end of the vod.
                   </Typography>
+                  <br />
+                  <FormControl>
+                    <Select
+                      labelId="selectQuality"
+                      value={selectedQuality}
+                      onChange={(event) =>
+                        setSelectedQuality(event.target.value)
+                      }
+                    >
+                      {qualities.map((name) => (
+                        <MenuItem key={name} value={name}>
+                          {name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <FormHelperText>Video Quality</FormHelperText>
+                  </FormControl>
                 </div>
               )}
               <div className={classes.timePicker}>
