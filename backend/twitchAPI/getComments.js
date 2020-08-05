@@ -1,4 +1,4 @@
-import axios from "axios";
+const axios = require("axios");
 const config = { headers: { "Client-ID": "kimne78kx3ncx6brgo4mv6wki5h1ko" } };
 
 // This is used to get the first few comments based on time

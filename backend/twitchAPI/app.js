@@ -1,4 +1,3 @@
-const fs = require("fs");
 const comments = require("./getComments");
 const highlights = require("./getHighlights");
 

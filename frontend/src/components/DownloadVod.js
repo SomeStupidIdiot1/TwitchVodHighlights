@@ -15,6 +15,7 @@ import {
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
 import { getVodInfo } from "../twitchAPI/getVodInfo";
+// import { getQualities } from "../twitchAPI/getVod";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -73,6 +74,9 @@ const DownloadVod = () => {
       if (splitItem.trim() !== "" && !isNaN(splitItem)) id = splitItem.trim();
     if (id === "") setErr(`Input is badly formatted`);
     else {
+      // getQualities(id)
+      //   .then((qualities) => console.log(qualities))
+      //   .catch((err) => console.log(err));
       getVodInfo(id)
         .then((data) => {
           setAuthor(data.channel.display_name);

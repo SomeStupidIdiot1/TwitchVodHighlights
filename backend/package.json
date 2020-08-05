@@ -1,0 +1,21 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "child_process": "^1.0.2",
+    "fs-extra": "^9.0.1",
+    "temp": "^0.9.1"
+  },
+  "scripts": {
+    "dev": "nodemon index.js",
+    "electron": "electron ."
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}

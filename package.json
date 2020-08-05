@@ -1,52 +1,19 @@
 {
   "name": "twitchhighlightsfinder",
-  "version": "0.1.0",
-  "private": true,
-  "main": "main.js",
-  "dependencies": {
-    "@material-ui/core": "^4.11.0",
-    "@material-ui/icons": "^4.9.1",
-    "@material-ui/lab": "^4.0.0-alpha.56",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
-    "axios": "^0.19.2",
-    "child_process": "^1.0.2",
-    "dotenv": "^8.2.0",
-    "electron-is-dev": "^1.2.0",
-    "file-saver": "^2.0.2",
-    "fs": "0.0.1-security",
-    "nodeplotlib": "^0.6.5",
-    "path": "^0.12.7",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
-    "tmp": "^0.2.1"
-  },
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "electron": "electron ."
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SomeStupidIdiot1/TwitchVodHighlights.git"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SomeStupidIdiot1/TwitchVodHighlights/issues"
   },
-  "devDependencies": {
-    "electron": "^9.1.0"
-  },
-  "homepage": "./"
+  "homepage": "https://github.com/SomeStupidIdiot1/TwitchVodHighlights#readme"
 }

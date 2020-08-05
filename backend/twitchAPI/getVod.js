@@ -1,11 +1,11 @@
 // For getting info from twitch api
-import axios from "axios";
-// For making a new video file
-import fs from "fs";
+const axios = require("axios");
 // For making a temporary directory
-import tmp from "tmp";
+const tmp = require("tmp");
 // For executing a ffmpeg command
-import { exec } from "child_process";
+const { exec } = require("child_process");
+// For making a new video file
+const fse = require("fs-extra");
 // Used to access twitch api
 const config = { headers: { "Client-ID": "kimne78kx3ncx6brgo4mv6wki5h1ko" } };
 
@@ -64,8 +64,8 @@ const getPlaylist = async (videoId, quality = "default") => {
 const getVideoClip = async (url, newFilePath) => {
   try {
     const res = await axios.get(url, { responseType: "stream" });
-    const stream = fs.createWriteStream(newFilePath);
-    res.data.pipe(fs.createWriteStream(newFilePath));
+    const stream = fse.createWriteStream(newFilePath);
+    res.data.pipe(fse.createWriteStream(newFilePath));
     console.log("Downloading video clip from " + url);
     return new Promise((resolve, reject) => {
       res.data.on("end", () => {
