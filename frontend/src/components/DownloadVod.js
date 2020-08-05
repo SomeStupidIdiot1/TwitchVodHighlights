@@ -14,8 +14,8 @@ import {
 } from "@material-ui/core";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
-import { getVodInfo } from "../twitchAPI/getVodInfo";
 import { makeStyles } from "@material-ui/core/styles";
+import { getVodInfo } from "../services/vod";
 
 const useStyles = makeStyles((theme) => ({
   displayVodInfo: {
@@ -95,8 +95,8 @@ const DownloadVod = () => {
         timeSelected[1] === "0" || timeSelected[1] === "3"
           ? `${currValue[1]}${intValue}`
           : parseInt(currValue[1]) >= 6
-            ? `0${intValue}`
-            : `${currValue[1]}${intValue}`;
+          ? `0${intValue}`
+          : `${currValue[1]}${intValue}`;
 
       const copy = [...allTimes];
       const copy2 = [...copy[timeSelected[0]]];
