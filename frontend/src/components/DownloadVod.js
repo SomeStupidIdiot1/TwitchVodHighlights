@@ -15,7 +15,6 @@ import {
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
 import { getVodInfo } from "../twitchAPI/getVodInfo";
-// import { getQualities } from "../twitchAPI/getVod";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -72,11 +71,8 @@ const DownloadVod = () => {
     setTitle("");
     for (const splitItem of url.trim().split("/"))
       if (splitItem.trim() !== "" && !isNaN(splitItem)) id = splitItem.trim();
-    if (id === "") setErr(`Input is badly formatted`);
+    if (id === "") setErr("Input is badly formatted");
     else {
-      // getQualities(id)
-      //   .then((qualities) => console.log(qualities))
-      //   .catch((err) => console.log(err));
       getVodInfo(id)
         .then((data) => {
           setAuthor(data.channel.display_name);
@@ -99,8 +95,8 @@ const DownloadVod = () => {
         timeSelected[1] === "0" || timeSelected[1] === "3"
           ? `${currValue[1]}${intValue}`
           : parseInt(currValue[1]) >= 6
-          ? `0${intValue}`
-          : `${currValue[1]}${intValue}`;
+            ? `0${intValue}`
+            : `${currValue[1]}${intValue}`;
 
       const copy = [...allTimes];
       const copy2 = [...copy[timeSelected[0]]];

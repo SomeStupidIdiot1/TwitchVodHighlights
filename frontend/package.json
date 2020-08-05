@@ -21,9 +21,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "lint": "eslint . --fix"
   },
   "browserslist": {
     "production": [
@@ -37,6 +35,9 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^7.6.0",
+    "eslint-plugin-react": "^7.20.5"
+  },
   "homepage": "./"
 }

@@ -13,7 +13,6 @@ import {
   Checkbox,
   ListItemText,
 } from "@material-ui/core";
-import { getVodInfo } from "../twitchAPI/getVodInfo";
 import { saveAs } from "file-saver";
 
 const useStyles = makeStyles((theme) => ({
@@ -160,7 +159,7 @@ const LookUp = () => {
                     }
                   />
                 </ListItem>
-                {vodData.map((data, index) => (
+                {vodData.map((data) => (
                   <ListItem
                     button
                     key={data._id}
