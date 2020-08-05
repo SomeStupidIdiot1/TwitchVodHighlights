@@ -7,9 +7,11 @@ function createWindow() {
     width: 1000,
     height: 800,
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
     },
   });
+
+  require("./app"); // Express app
   win.loadURL(
     isDev
       ? "http://localhost:3000"

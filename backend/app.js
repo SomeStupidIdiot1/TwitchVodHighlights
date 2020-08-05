@@ -4,8 +4,8 @@ const cors = require("cors");
 const PORT = process.env.PORT || 3000;
 const app = express();
 const getVodInfo = require("./twitchAPI/getVodInfo");
-const { getQualities } = require("./twitchAPI/getvod");
-
+const { getQualities, getVideo } = require("./twitchAPI/getvod");
+const electron = require("electron");
 if (process.env.NODE_ENV === "production") {
   console.log("Production build...");
   app.use(express.static("build"));
@@ -31,6 +31,15 @@ app.get("/vod/vodqualities/:id", (req, res) => {
     .catch(() => {
       res.status(400).end();
     });
+});
+app.get("/vod/voddownload/:id", (_, res) => {
+  electron.dialog
+    .showOpenDialog({
+      properties: ["openFile", "multiSelections"],
+    })
+    .then((value) => console.log(value, "testd"));
+
+  res.end();
 });
 
 app.listen(PORT, () => console.log("Server is ready on " + PORT));

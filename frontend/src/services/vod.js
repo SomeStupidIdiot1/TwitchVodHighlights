@@ -18,3 +18,10 @@ export const getQualities = async (id) => {
     throw new Error(`Could not get twitch.tv/videos/${id}`);
   }
 };
+export const getVod = async (id) => {
+  try {
+    return (await axios.get(`${baseUrl}/vod/voddownload/${id}`)).data;
+  } catch (err) {
+    throw new Error(`Could not download from twitch.tv/videos/${id}`);
+  }
+};

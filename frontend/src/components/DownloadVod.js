@@ -19,7 +19,7 @@ import {
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
-import { getVodInfo, getQualities } from "../services/vod";
+import { getVodInfo, getQualities, getVod } from "../services/vod";
 
 const useStyles = makeStyles((theme) => ({
   displayVodInfo: {
@@ -61,6 +61,7 @@ const DownloadVod = () => {
   const initialId = window.localStorage.getItem("downloadVodLookUpId");
   const classes = useStyles();
   const [url, setUrl] = React.useState(initialId ? initialId : "");
+  const [vodId, setId] = React.useState(initialId ? initialId : "");
   const [err, setErr] = React.useState("");
   const [title, setTitle] = React.useState("");
   const [author, setAuthor] = React.useState("");
@@ -75,6 +76,7 @@ const DownloadVod = () => {
     let id = "";
     setAuthor("");
     setTitle("");
+    setId("");
     for (const splitItem of url.trim().split("/"))
       if (splitItem.trim() !== "" && !isNaN(splitItem)) id = splitItem.trim();
     if (id === "") setErr("Input is badly formatted");
@@ -83,6 +85,7 @@ const DownloadVod = () => {
         .then((data) => {
           setAuthor(data.channel.display_name);
           setTitle(data.title);
+          setId(id);
           window.localStorage.setItem("downloadVodLookUpId", id);
           return getQualities(id);
         })
@@ -90,10 +93,12 @@ const DownloadVod = () => {
           setQualities(qualities);
           setSelectedQuality(qualities[0]);
         })
-        .catch((e) => setErr(`Could not access ${e.message}`));
+        .catch((e) => setErr(`${e.message}`));
     }
   };
-  const handleDownload = (combined) => () => {};
+  const handleDownload = () => {
+    getVod(vodId);
+  };
   const handleAddTime = () => {
     setAllTimes(allTimes.concat([["00", "00", "00", "00", "00", "00"]]));
   };
@@ -254,30 +259,23 @@ const DownloadVod = () => {
                   })}
                 </List>
                 <br />
+
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={handleDownload(false)}
+                  onClick={handleDownload}
                   className={classes.downloadButton}
                   tabIndex={6 * allTimes.length + 2}
                 >
                   Download Separately
                 </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleDownload(true)}
-                  className={classes.downloadButton}
-                  tabIndex={6 * allTimes.length + 3}
-                >
-                  Download Combined
-                </Button>
+
                 <Button
                   variant="contained"
                   onClick={handleAddTime}
                   color="primary"
                   className={classes.buttonTimeChange}
-                  tabIndex={6 * allTimes.length + 4}
+                  tabIndex={6 * allTimes.length + 3}
                 >
                   Add another time range
                 </Button>
