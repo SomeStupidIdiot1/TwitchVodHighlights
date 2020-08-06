@@ -95,10 +95,10 @@ const combineVideoClips = (
     if (i !== lastFileNum) command += `${path}\\${i}.ts|`;
     else command += `${path}\\${i}.ts"`;
   }
-  command += ` -t ${length} -c copy ${outputName}`;
+  command += ` -t ${length} -c copy ${outputName.replace(" ", "%20")}`;
   console.log("Running ffmpeg command: " + command);
   return new Promise((resolve, reject) => {
-    exec(command, (err) => {
+    exec(command, { cwd: __dirname }, (err) => {
       if (err) reject(err);
       resolve();
     });
@@ -185,8 +185,13 @@ const getVideo = async (
   startTime = 0,
   endTime = 100000000,
   quality = "default",
+  outputPath,
   fileName = null
 ) => {
+  if (endTime <= startTime) {
+    console.log("Bad times");
+    return;
+  }
   // The specific playlist based by the quality is gotten here
   const playlistUrl = await getPlaylist(videoId, quality);
 
@@ -218,20 +223,25 @@ const getVideo = async (
 
   // Getting the final video file name
   const videoFileName = fileName
-    ? fileName
-    : `videoId=${videoId}startTime=${startTime}endTime=${endTime}quality=${quality}.ts`;
+    ? `${outputPath}\\${fileName}`
+    : `${outputPath}\\videoId=${videoId}startTime=${startTime}endTime=${endTime}quality=${quality}.ts`;
   // Combining all the video file clips
   console.log("Combining video clips...");
-  await combineVideoClips(
-    path,
-    startCropTime,
-    info[0].fileIndex,
-    info[info.length - 1].fileIndex,
-    videoFileName,
-    length
-  );
-  console.log("Succesfully combined video clips.");
-  console.log(`The video file called ${videoFileName} has been created.`);
+  try {
+    await combineVideoClips(
+      path,
+      startCropTime,
+      info[0].fileIndex,
+      info[info.length - 1].fileIndex,
+      videoFileName,
+      length
+    );
+    console.log("Succesfully combined video clips.");
+    console.log(`The video file called ${videoFileName} has been created.`);
+  } catch (err) {
+    console.log("Failed to combine video clips.\n");
+    console.log(err.message);
+  }
   console.log("Removing temp folder...");
   tmpobj.removeCallback();
   console.log("Succesfully removed temp folder.");

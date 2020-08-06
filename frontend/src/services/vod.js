@@ -1,11 +1,8 @@
 import axios from "axios";
 
-// Only for development
-const baseUrl = "http://localhost:8080";
-
 export const getVodInfo = async (id) => {
   try {
-    return (await axios.get(`${baseUrl}/vod/vodinfo/${id}`)).data;
+    return (await axios.get(`/vod/vodinfo/${id}`)).data;
   } catch (err) {
     throw new Error(`Could not get twitch.tv/videos/${id}`);
   }
@@ -13,15 +10,23 @@ export const getVodInfo = async (id) => {
 
 export const getQualities = async (id) => {
   try {
-    return (await axios.get(`${baseUrl}/vod/vodqualities/${id}`)).data;
+    return (await axios.get(`/vod/vodqualities/${id}`)).data;
   } catch (err) {
     throw new Error(`Could not get twitch.tv/videos/${id}`);
   }
 };
-export const getVod = async (id) => {
+export const getVods = async (data) => {
+  // data: {quality: ???, id: ??? clips: [{startTime, endTime, filename}]}
   try {
-    return (await axios.get(`${baseUrl}/vod/voddownload/${id}`)).data;
+    await axios.post(`/vod/voddownload`, data);
   } catch (err) {
-    throw new Error(`Could not download from twitch.tv/videos/${id}`);
+    throw err;
+  }
+};
+export const downloadMetadata = async (metadata) => {
+  try {
+    if (metadata.length) await axios.post("/jsondownload", metadata);
+  } catch (err) {
+    throw new Error(`Could not download metadata`);
   }
 };

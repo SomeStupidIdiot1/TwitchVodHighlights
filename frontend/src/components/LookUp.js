@@ -13,8 +13,7 @@ import {
   Checkbox,
   ListItemText,
 } from "@material-ui/core";
-import { saveAs } from "file-saver";
-import { getVodInfo } from "../services/vod";
+import { getVodInfo, downloadMetadata } from "../services/vod";
 
 const useStyles = makeStyles((theme) => ({
   vods: {
@@ -108,12 +107,11 @@ const LookUp = () => {
     window.localStorage.setItem("pastVodData", JSON.stringify(newVodData));
   };
   const handleDownload = () => {
-    saveAs(
-      new Blob([JSON.stringify(vodData)], {
-        type: "text/plain;charset=utf-8",
-      }),
-      "vodsMetadata.json"
-    );
+    const actualMetadata = [];
+    vodData.forEach((val) => {
+      if (checked.indexOf(val._id) !== -1) actualMetadata.push(val);
+    });
+    downloadMetadata(actualMetadata);
   };
   return (
     <Container maxWidth="md">

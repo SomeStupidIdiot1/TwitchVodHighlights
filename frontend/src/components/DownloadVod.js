@@ -19,7 +19,7 @@ import {
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
-import { getVodInfo, getQualities, getVod } from "../services/vod";
+import { getVodInfo, getQualities, getVods } from "../services/vod";
 
 const useStyles = makeStyles((theme) => ({
   displayVodInfo: {
@@ -97,7 +97,17 @@ const DownloadVod = () => {
     }
   };
   const handleDownload = () => {
-    getVod(vodId);
+    const times = allTimes.map((timeArr) => {
+      const startTime = timeArr[0] * 60 * 60 + timeArr[1] * 60 + timeArr[2];
+      const endTime = timeArr[3] * 60 * 60 + timeArr[4] * 60 + timeArr[5];
+      return { startTime, endTime };
+    });
+    const data = {
+      quality: selectedQuality,
+      id: vodId,
+      times,
+    };
+    getVods(data);
   };
   const handleAddTime = () => {
     setAllTimes(allTimes.concat([["00", "00", "00", "00", "00", "00"]]));
