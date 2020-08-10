@@ -86,21 +86,24 @@ app.get("/vod/simplechat/:id", (req, res) => {
     })
     .then((value) => {
       if (!value.canceled) {
-        getSimpleComments(req.params.id, 0, 10000000)
+        getSimpleComments(req.params.id)
           .then((comments) => {
+            let finalComment = "";
             comments.forEach(({ name, message, offset_seconds }) => {
               const hours = offset_seconds / 60 / 60;
               const minutes = (hours - ~~hours) * 60;
               const seconds = (minutes - ~~minutes) * 60;
-              fse.appendFileSync(
-                `${value.filePaths[0]}\\commentsFor${req.params.id}.txt`,
-                `${name} [${~~hours}h ${~~minutes}m ${~~seconds}s]: ${message}\n`,
-                "utf8",
-                (err) => {
-                  if (err) console.log(err.message);
-                }
-              );
+              finalComment += `${name} [${~~hours}h ${~~minutes}m ${~~seconds}s]: ${message}\n`;
             });
+            fse.writeFileSync(
+              `${value.filePaths[0]}\\commentsFor${req.params.id}.txt`,
+              finalComment,
+              "utf8",
+              (err) => {
+                if (err) console.log(err.message);
+              }
+            );
+            console.log("Finished writing comments to simple file.");
           })
           .catch(() => res.status(404).send("Bad id"))
           .finally(() => {
@@ -120,7 +123,7 @@ app.get("/vod/jsonchat/:id", (req, res) => {
       if (!value.canceled) {
         getCommentsJson(req.params.id, 0, 10000000)
           .then((comments) => {
-            fse.writeFile(
+            fse.writeFileSync(
               `${value.filePaths[0]}\\commentsFor${req.params.id}.json`,
               JSON.stringify(comments),
               "utf8",
@@ -128,6 +131,7 @@ app.get("/vod/jsonchat/:id", (req, res) => {
                 if (err) console.log(err.message);
               }
             );
+            console.log("Finished writing comments to JSON file.");
           })
           .catch(() => res.status(404).send("Bad id"))
           .finally(() => {
