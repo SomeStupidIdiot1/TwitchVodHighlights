@@ -58,95 +58,118 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 const DownloadVod = () => {
-  const initialId = window.localStorage.getItem("downloadVodLookUpId");
+  const oldVodInfo = JSON.parse(window.localStorage.getItem("downloadVod"));
+  const defaultVodInfo = {
+    vodId: "",
+    title: "",
+    author: "",
+    timeSelected: "",
+    showInstructions: false,
+    filenames: [""],
+    allTimes: [["00", "00", "00", "00", "00", "00"]],
+    qualities: [],
+    selectedQuality: "",
+  };
   const classes = useStyles();
-  const [url, setUrl] = React.useState(initialId ? initialId : "");
-  const [vodId, setId] = React.useState(initialId ? initialId : "");
+  const [url, setUrl] = React.useState(oldVodInfo.vodId);
+  const [vodInfo, setVodInfo] = React.useState(
+    oldVodInfo ? oldVodInfo : defaultVodInfo
+  );
   const [err, setErr] = React.useState("");
-  const [title, setTitle] = React.useState("");
-  const [author, setAuthor] = React.useState("");
-  const [timeSelected, setTimeSelected] = React.useState("");
-  const [showInstructions, setShowInstructions] = React.useState(false);
-  const [filenames, setFilenames] = React.useState([""]);
-  const [allTimes, setAllTimes] = React.useState([
-    ["00", "00", "00", "00", "00", "00"],
-  ]);
-  const [qualities, setQualities] = React.useState([]);
-  const [selectedQuality, setSelectedQuality] = React.useState("");
   const lookUp = () => {
     let id = "";
-    setAuthor("");
-    setTitle("");
-    setId("");
     for (const splitItem of url.trim().split("/"))
       if (splitItem.trim() !== "" && !isNaN(splitItem)) id = splitItem.trim();
     if (id === "") setErr("Input is badly formatted");
     else {
       getVodInfo(id)
         .then((data) => {
-          setAuthor(data.channel.display_name);
-          setTitle(data.title);
-          setId(id);
-          window.localStorage.setItem("downloadVodLookUpId", id);
-          return getQualities(id);
-        })
-        .then((qualities) => {
-          setQualities(qualities);
-          setSelectedQuality(qualities[0]);
+          getQualities(id)
+            .then((qualities) => {
+              const copy = {
+                ...vodInfo,
+                vodId: id,
+                title: data.title,
+                author: data.channel.display_name,
+                qualities: qualities,
+                selectedQuality: qualities[0],
+              };
+              window.localStorage.setItem("downloadVod", JSON.stringify(copy));
+              setVodInfo(copy);
+            })
+            .catch((e) => setErr(`${e.message}`));
         })
         .catch((e) => setErr(`${e.message}`));
     }
   };
   const handleDownload = () => {
-    const times = allTimes.map((timeArr, index) => {
+    const times = vodInfo.allTimes.map((timeArr, index) => {
       const startTime =
         parseInt(timeArr[0]) * 60 * 60 + timeArr[1] * 60 + timeArr[2] * 1;
       const endTime = timeArr[3] * 60 * 60 + timeArr[4] * 60 + timeArr[5] * 1;
-      if (filenames[index] === "") return { startTime, endTime };
+      if (vodInfo.filenames[index] === "") return { startTime, endTime };
       return {
         startTime,
         endTime,
-        filename: filenames[index].replace(/ /g, "_") + ".ts",
+        filename: vodInfo.filenames[index].replace(/ /g, "_") + ".ts",
       };
     });
     const data = {
-      quality: selectedQuality,
-      id: vodId,
+      quality: vodInfo.selectedQuality,
+      id: vodInfo.vodId,
       times,
     };
-    getVods(data);
+    try {
+      getVods(data);
+    } catch (err) {
+      setErr(err.message);
+      setVodInfo(defaultVodInfo);
+      window.localStorage.setItem(
+        "downloadVod",
+        JSON.stringify(defaultVodInfo)
+      );
+    }
   };
   const handleAddTime = () => {
-    setAllTimes(allTimes.concat([["00", "00", "00", "00", "00", "00"]]));
-    setFilenames(filenames.concat(""));
+    const newInfo = {
+      ...vodInfo,
+      allTimes: vodInfo.allTimes.concat([["00", "00", "00", "00", "00", "00"]]),
+      filenames: vodInfo.filenames.concat(""),
+    };
+    setVodInfo(newInfo);
+    window.localStorage.setItem("downloadVod", JSON.stringify(newInfo));
   };
   const handleKeyPress = (e) => {
-    if (author !== "" && timeSelected !== "" && !isNaN(e.key)) {
-      const currValue = allTimes[timeSelected[0]][timeSelected[1]];
+    if (vodInfo.author !== "" && vodInfo.timeSelected !== "" && !isNaN(e.key)) {
+      const currValue =
+        vodInfo.allTimes[vodInfo.timeSelected[0]][vodInfo.timeSelected[1]];
       let newValue = "";
       let intValue = parseInt(e.key);
       newValue =
-        timeSelected[1] === "0" || timeSelected[1] === "3"
+        vodInfo.timeSelected[1] === "0" || vodInfo.timeSelected[1] === "3"
           ? `${currValue[1]}${intValue}`
           : parseInt(currValue[1]) >= 6
           ? `0${intValue}`
           : `${currValue[1]}${intValue}`;
 
-      const copy = [...allTimes];
-      const copy2 = [...copy[timeSelected[0]]];
-      copy2[timeSelected[1]] = newValue;
-      copy[timeSelected[0]] = copy2;
-      setAllTimes(copy);
+      const copy = [...vodInfo.allTimes];
+      const copy2 = [...copy[vodInfo.timeSelected[0]]];
+      copy2[vodInfo.timeSelected[1]] = newValue;
+      copy[vodInfo.timeSelected[0]] = copy2;
+      const newInfo = { ...vodInfo, allTimes: copy };
+      setVodInfo(newInfo);
+      window.localStorage.setItem("downloadVod", JSON.stringify(newInfo));
     }
   };
   const handleDelete = (index) => () => {
-    if (allTimes.length === 1) return;
-    const allTimesCopy = [...allTimes];
+    if (vodInfo.allTimes.length === 1) return;
+    const allTimesCopy = [...vodInfo.allTimes];
     allTimesCopy.splice(index, 1);
-    setAllTimes(allTimesCopy);
-    const fileCopy = [...filenames];
+    const fileCopy = [...vodInfo.filenames];
     fileCopy.splice(index, 1);
-    setFilenames(fileCopy);
+    const newInfo = { ...vodInfo, allTimes: allTimesCopy, filenames: fileCopy };
+    setVodInfo(newInfo);
+    window.localStorage.setItem("downloadVod", JSON.stringify(newInfo));
   };
   return (
     <Container maxWidth="md">
@@ -178,23 +201,36 @@ const DownloadVod = () => {
             Look up
           </Button>
         </Grid>
-        {author !== "" && (
+        {vodInfo.author !== "" && (
           <Grid item xs={12}>
             <div className={classes.displayVodInfo}>
               <Typography component="h3" variant="h6">
-                <b>{author}</b>: {title}
+                <b>{vodInfo.author}</b>: {vodInfo.title}
               </Typography>
               <br />
               <Button
                 className={classes.instructionsButton}
-                onClick={() => setShowInstructions(!showInstructions)}
+                onClick={() => {
+                  setVodInfo({
+                    ...vodInfo,
+                    showInstructions: !vodInfo.showInstructions,
+                  });
+                  window.localStorage.setItem(
+                    "downloadVod",
+                    JSON.stringify({
+                      ...vodInfo,
+                      showInstructions: !vodInfo.showInstructions,
+                    })
+                  );
+                }}
                 color="secondary"
                 variant="contained"
                 tabIndex={-1}
               >
-                {showInstructions ? "Hide" : "Show"} instructions and settings
+                {vodInfo.showInstructions ? "Hide" : "Show"} instructions and
+                settings
               </Button>
-              {showInstructions && (
+              {vodInfo.showInstructions && (
                 <div className={classes.instructions}>
                   <Typography component="h3" variant="subtitle1">
                     Specify the time range of the vod in the format of{" "}
@@ -216,12 +252,22 @@ const DownloadVod = () => {
                   <FormControl>
                     <Select
                       labelId="selectQuality"
-                      value={selectedQuality}
-                      onChange={(event) =>
-                        setSelectedQuality(event.target.value)
-                      }
+                      value={vodInfo.selectedQuality}
+                      onChange={(event) => {
+                        setVodInfo({
+                          ...vodInfo,
+                          selectedQuality: event.target.value,
+                        });
+                        window.localStorage.setItem(
+                          "downloadVod",
+                          JSON.stringify({
+                            ...vodInfo,
+                            selectedQuality: event.target.value,
+                          })
+                        );
+                      }}
                     >
-                      {qualities.map((name) => (
+                      {vodInfo.qualities.map((name) => (
                         <MenuItem key={name} value={name}>
                           {name}
                         </MenuItem>
@@ -233,7 +279,7 @@ const DownloadVod = () => {
               )}
               <div className={classes.timePicker}>
                 <List>
-                  {new Array(allTimes.length).fill().map((_, index) => {
+                  {new Array(vodInfo.allTimes.length).fill().map((_, index) => {
                     return (
                       <ListItem key={index} className={classes.listItem}>
                         <IconButton
@@ -256,17 +302,26 @@ const DownloadVod = () => {
                                       <span
                                         onKeyDown={handleKeyPress}
                                         className={
-                                          timeSelected === `${index}${subIndex}`
+                                          vodInfo.timeSelected ===
+                                          `${index}${subIndex}`
                                             ? classes.timeDisplay
                                             : {}
                                         }
                                         onFocus={() =>
-                                          setTimeSelected(`${index}${subIndex}`)
+                                          setVodInfo({
+                                            ...vodInfo,
+                                            timeSelected: `${index}${subIndex}`,
+                                          })
                                         }
-                                        onBlur={() => setTimeSelected("")}
+                                        onBlur={() =>
+                                          setVodInfo({
+                                            ...vodInfo,
+                                            timeSelected: "",
+                                          })
+                                        }
                                         tabIndex={index * 6 + subIndex + 1}
                                       >
-                                        {allTimes[index][subIndex]}
+                                        {vodInfo.allTimes[index][subIndex]}
                                       </span>
                                       {subIndex !== 2 && subIndex !== 5 && ":"}
                                     </React.Fragment>
@@ -281,12 +336,16 @@ const DownloadVod = () => {
                           variant="outlined"
                           color="secondary"
                           onChange={(e) => {
-                            const copy = [...filenames];
+                            const copy = [...vodInfo.filenames];
                             copy[index] = e.target.value;
-                            setFilenames(copy);
+                            setVodInfo({ ...vodInfo, filenames: copy });
+                            window.localStorage.setItem(
+                              "downloadVod",
+                              JSON.stringify({ ...vodInfo, filenames: copy })
+                            );
                           }}
                           margin="dense"
-                          value={filenames[index]}
+                          value={vodInfo.filenames[index]}
                         />
                       </ListItem>
                     );
@@ -299,7 +358,7 @@ const DownloadVod = () => {
                   color="primary"
                   onClick={handleDownload}
                   className={classes.downloadButton}
-                  tabIndex={6 * allTimes.length + 2}
+                  tabIndex={6 * vodInfo.allTimes.length + 2}
                 >
                   Download
                 </Button>
@@ -309,7 +368,7 @@ const DownloadVod = () => {
                   onClick={handleAddTime}
                   color="primary"
                   className={classes.buttonTimeChange}
-                  tabIndex={6 * allTimes.length + 3}
+                  tabIndex={6 * vodInfo.allTimes.length + 3}
                 >
                   Add another time range
                 </Button>
