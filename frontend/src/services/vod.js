@@ -46,3 +46,11 @@ export const downloadChatJson = async (id) => {
   }
 
 }
+export const getHighlights = async (id) => {
+  try {
+    return (await axios.get(`/vod/highlights/${id}`)).data;
+  } catch (err) {
+    throw new Error(`Could not get highlights from twitch.tv/videos/${id}.`);
+  }
+
+}

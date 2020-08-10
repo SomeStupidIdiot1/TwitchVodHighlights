@@ -12,6 +12,7 @@ const {
   getSimpleComments,
   getCommentsJson,
 } = require("./twitchAPI/getComments");
+const { getChatSpeed } = require("./twitchAPI/getHighlights");
 if (process.env.NODE_ENV === "production") {
   console.log("Production build...");
   app.use(express.static("build"));
@@ -140,5 +141,14 @@ app.get("/vod/jsonchat/:id", (req, res) => {
       }
     });
 });
-
+app.get("/vod/highlights/:id", async (req, res) => {
+  try {
+    res.send(await getChatSpeed(req.params.id));
+  } catch (err) {
+    console.log(err);
+    res
+      .status(404)
+      .send("Specified id is not applicable for getting highlights");
+  }
+});
 app.listen(PORT, () => console.log("Server is ready on " + PORT));

@@ -136,12 +136,7 @@ const LookUp = () => {
             className={classes.textField}
             onChange={(e) => setUrls(e.target.value)}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={lookUp}
-            fullWidth
-          >
+          <Button variant="contained" color="primary" onClick={lookUp}>
             Look up
           </Button>
         </Grid>

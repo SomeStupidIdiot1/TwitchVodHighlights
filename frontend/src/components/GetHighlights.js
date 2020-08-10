@@ -10,6 +10,8 @@ import {
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
+import { getHighlights } from "../services/vod";
+
 const useStyles = makeStyles((theme) => ({
   description: {
     marginTop: theme.spacing(2),
@@ -18,14 +20,28 @@ const useStyles = makeStyles((theme) => ({
 }));
 const GetHighlights = () => {
   const classes = useStyles();
-  const [url, setUrl] = React.useState("");
+  const [url, setUrl] = React.useState(
+    window.localStorage.getItem("getHighlightsId") || ""
+  );
   const [err, setErr] = React.useState("");
-  const downloadSimple = () => {};
-  const downloadJson = () => {};
+
+  const getHighlightsHandler = () => {
+    let id = "";
+    for (const splitItem of url.trim().split("/"))
+      if (splitItem.trim() !== "" && !isNaN(splitItem)) id = splitItem.trim();
+    if (id === "") setErr("Input is badly formatted");
+    else {
+      getHighlights(id)
+        .then((result) => {
+          window.localStorage.setItem("getHighlightsId", id);
+        })
+        .catch((err) => setErr(err.message));
+    }
+  };
   return (
     <Container maxWidth="md">
       <CssBaseline />
-      <Grid container spacing={2}>
+      <Grid container spacing={1}>
         <Grid item xs={12}>
           <Typography
             variant="body1"
@@ -43,21 +59,15 @@ const GetHighlights = () => {
             className={classes.textField}
             onChange={(e) => setUrl(e.target.value)}
           />
+        </Grid>
+        <Grid item>
           <Button
             variant="contained"
             color="primary"
-            onClick={downloadSimple}
+            onClick={getHighlightsHandler}
             fullWidth
           >
-            Download simple chat (text file)
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={downloadJson}
-            fullWidth
-          >
-            Download complicated chat (JSON file)
+            Get Highlights
           </Button>
         </Grid>
       </Grid>

@@ -1,9 +1,12 @@
+const { getSimpleComments } = require("./getComments");
+
 // Get chat speed in messages/second
-export const getChatSpeed = (simpleComments, timeInterval = 4) => {
-  if (timeInterval <= 0) timeInterval = 2;
+const getChatSpeed = async (id, timeInterval = 4) => {
+  const simpleComments = await getSimpleComments(id);
+  if (timeInterval <= 0) timeInterval = 4;
   timeInterval = Math.ceil(timeInterval);
   const times = simpleComments.map(({ offset_seconds }) => offset_seconds);
-  if (times.length < 50) return [];
+  if (times.length < 50) return {};
   let speeds = [];
   let timeIndex = 0;
   let topSpeeds = Array(50)
@@ -68,7 +71,6 @@ export const getChatSpeed = (simpleComments, timeInterval = 4) => {
     );
   }
   filteredTopSpeeds.sort((a, b) => (a.time <= b.time ? -1 : 1));
-  console.log(filteredTopSpeeds);
   return {
     speeds,
     timeInterval,
@@ -77,3 +79,4 @@ export const getChatSpeed = (simpleComments, timeInterval = 4) => {
     topSpeeds: filteredTopSpeeds,
   };
 };
+module.exports = { getChatSpeed };
