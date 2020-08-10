@@ -67,6 +67,7 @@ const DownloadVod = () => {
   const [author, setAuthor] = React.useState("");
   const [timeSelected, setTimeSelected] = React.useState("");
   const [showInstructions, setShowInstructions] = React.useState(false);
+  const [filenames, setFilenames] = React.useState([""]);
   const [allTimes, setAllTimes] = React.useState([
     ["00", "00", "00", "00", "00", "00"],
   ]);
@@ -97,10 +98,16 @@ const DownloadVod = () => {
     }
   };
   const handleDownload = () => {
-    const times = allTimes.map((timeArr) => {
-      const startTime = timeArr[0] * 60 * 60 + timeArr[1] * 60 + timeArr[2];
-      const endTime = timeArr[3] * 60 * 60 + timeArr[4] * 60 + timeArr[5];
-      return { startTime, endTime };
+    const times = allTimes.map((timeArr, index) => {
+      const startTime =
+        parseInt(timeArr[0]) * 60 * 60 + timeArr[1] * 60 + timeArr[2] * 1;
+      const endTime = timeArr[3] * 60 * 60 + timeArr[4] * 60 + timeArr[5] * 1;
+      if (filenames[index] === "") return { startTime, endTime };
+      return {
+        startTime,
+        endTime,
+        filename: filenames[index].replace(/ /g, "_") + ".ts",
+      };
     });
     const data = {
       quality: selectedQuality,
@@ -111,6 +118,7 @@ const DownloadVod = () => {
   };
   const handleAddTime = () => {
     setAllTimes(allTimes.concat([["00", "00", "00", "00", "00", "00"]]));
+    setFilenames(filenames.concat(""));
   };
   const handleKeyPress = (e) => {
     if (author !== "" && timeSelected !== "" && !isNaN(e.key)) {
@@ -136,6 +144,9 @@ const DownloadVod = () => {
     const allTimesCopy = [...allTimes];
     allTimesCopy.splice(index, 1);
     setAllTimes(allTimesCopy);
+    const fileCopy = [...filenames];
+    fileCopy.splice(index, 1);
+    setFilenames(fileCopy);
   };
   return (
     <Container maxWidth="md">
@@ -232,6 +243,7 @@ const DownloadVod = () => {
                         >
                           <DeleteOutlinedIcon />
                         </IconButton>
+
                         <ListItemText
                           primary={
                             <>
@@ -264,6 +276,18 @@ const DownloadVod = () => {
                             </>
                           }
                         />
+                        <TextField
+                          label="File name (optional)"
+                          variant="outlined"
+                          color="secondary"
+                          onChange={(e) => {
+                            const copy = [...filenames];
+                            copy[index] = e.target.value;
+                            setFilenames(copy);
+                          }}
+                          margin="dense"
+                          value={filenames[index]}
+                        />
                       </ListItem>
                     );
                   })}
@@ -277,7 +301,7 @@ const DownloadVod = () => {
                   className={classes.downloadButton}
                   tabIndex={6 * allTimes.length + 2}
                 >
-                  Download Separately
+                  Download
                 </Button>
 
                 <Button

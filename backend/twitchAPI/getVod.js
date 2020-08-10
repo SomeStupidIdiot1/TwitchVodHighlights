@@ -95,7 +95,7 @@ const combineVideoClips = (
     if (i !== lastFileNum) command += `${path}\\${i}.ts|`;
     else command += `${path}\\${i}.ts"`;
   }
-  command += ` -t ${length} -c copy ${outputName.replace(" ", "%20")}`;
+  command += ` -t ${length} -c copy "${outputName}"`;
   console.log("Running ffmpeg command: " + command);
   return new Promise((resolve, reject) => {
     exec(command, { cwd: __dirname }, (err) => {
@@ -189,7 +189,7 @@ const getVideo = async (
   fileName = null
 ) => {
   if (endTime <= startTime) {
-    console.log("Bad times");
+    console.log("End time is smaller or equal to the start time.");
     return;
   }
   // The specific playlist based by the quality is gotten here
@@ -200,11 +200,16 @@ const getVideo = async (
   const baseUrl = playlistUrl.substring(0, indexOfSlash);
 
   // Getting necessary info of this specific playlist
-  const { info, startCropTime, length } = await getPlaylistInfo(
-    startTime,
-    endTime,
-    playlistUrl
-  );
+  try {
+    var { info, startCropTime, length } = await getPlaylistInfo(
+      startTime,
+      endTime,
+      playlistUrl
+    );
+  } catch (err) {
+    console.log(err.message);
+    return;
+  }
   // Creating a temp directory
   const tmpobj = tmp.dirSync({ unsafeCleanup: true });
   const path = tmpobj.name;
