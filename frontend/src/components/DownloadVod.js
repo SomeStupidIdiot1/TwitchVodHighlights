@@ -72,9 +72,7 @@ const DownloadVod = () => {
   };
   const classes = useStyles();
   const [url, setUrl] = React.useState(oldVodInfo.vodId);
-  const [vodInfo, setVodInfo] = React.useState(
-    oldVodInfo ? oldVodInfo : defaultVodInfo
-  );
+  const [vodInfo, setVodInfo] = React.useState(oldVodInfo || defaultVodInfo);
   const [err, setErr] = React.useState("");
   const lookUp = () => {
     let id = "";

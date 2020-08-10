@@ -38,7 +38,7 @@ const LookUp = () => {
   const pastVodData = JSON.parse(window.localStorage.getItem("pastVodData"));
   const classes = useStyles();
   const [urls, setUrls] = React.useState("");
-  const [vodData, setVodData] = React.useState(pastVodData ? pastVodData : []);
+  const [vodData, setVodData] = React.useState(pastVodData || []);
   const [errs, setErrs] = React.useState([]);
   const [checked, setChecked] = React.useState(
     pastVodData ? new Array(pastVodData.length).fill(true) : []

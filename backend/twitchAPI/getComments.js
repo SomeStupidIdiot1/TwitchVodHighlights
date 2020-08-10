@@ -4,27 +4,35 @@ const config = { headers: { "Client-ID": "kimne78kx3ncx6brgo4mv6wki5h1ko" } };
 // This is used to get the first few comments based on time
 const getFirstComments = async (videoId, startInSeconds) => {
   const url = `https://api.twitch.tv/v5/videos/${videoId}/comments?content_offset_seconds=${startInSeconds}`;
-  const { data } = await axios.get(url, config);
-  console.log(
-    `loaded chat from ${data.comments[0].content_offset_seconds}s to ${
-      data.comments[data.comments.length - 1].content_offset_seconds
-    }s`
-  );
-  return data;
+  try {
+    const { data } = await axios.get(url, config);
+    console.log(
+      `loaded chat from ${data.comments[0].content_offset_seconds}s to ${
+        data.comments[data.comments.length - 1].content_offset_seconds
+      }s`
+    );
+    return data;
+  } catch (err) {
+    throw new Error("Bad Id");
+  }
 };
 // This is used to get the next comments based on the link from the previous comment
 const getNext = async (videoId, cursor) => {
   const url = `https://api.twitch.tv/v5/videos/${videoId}/comments?cursor=${cursor}`;
-  const { data } = await axios.get(url, config);
-  console.log(
-    `loaded chat from ${data.comments[0].content_offset_seconds}s to ${
-      data.comments[data.comments.length - 1].content_offset_seconds
-    }s`
-  );
-  return data;
+  try {
+    const { data } = await axios.get(url, config);
+    console.log(
+      `loaded chat from ${data.comments[0].content_offset_seconds}s to ${
+        data.comments[data.comments.length - 1].content_offset_seconds
+      }s`
+    );
+    return data;
+  } catch (err) {
+    throw new Error("Bad Id");
+  }
 };
 // This combines a lot of comments together based on time
-export const getCommentsJson = async (
+const getCommentsJson = async (
   videoId,
   startInSeconds = 0,
   endInSeconds = 1000000000
@@ -56,7 +64,7 @@ export const getCommentsJson = async (
   return comments;
 };
 // Only includes display name, the message, and the time
-export const getSimpleComments = async (
+const getSimpleComments = async (
   videoId,
   startInSeconds = 0,
   endInSeconds = 1000000000
@@ -68,3 +76,4 @@ export const getSimpleComments = async (
     offset_seconds: item.content_offset_seconds,
   }));
 };
+module.exports = { getCommentsJson, getSimpleComments };

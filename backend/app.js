@@ -8,6 +8,10 @@ const { getQualities, getVideo } = require("./twitchAPI/getvod");
 const fse = require("fs-extra");
 const electron = require("electron");
 const path = require("path");
+const {
+  getSimpleComments,
+  getCommentsJson,
+} = require("./twitchAPI/getComments");
 if (process.env.NODE_ENV === "production") {
   console.log("Production build...");
   app.use(express.static("build"));
@@ -74,4 +78,63 @@ app.post("/jsondownload", (req, res) => {
     });
   res.status(200).end();
 });
+app.get("/vod/simplechat/:id", (req, res) => {
+  electron.dialog
+    .showOpenDialog({
+      properties: ["openDirectory"],
+      defaultPath: electron.app.getPath("downloads"),
+    })
+    .then((value) => {
+      if (!value.canceled) {
+        getSimpleComments(req.params.id, 0, 10000000)
+          .then((comments) => {
+            comments.forEach(({ name, message, offset_seconds }) => {
+              const hours = offset_seconds / 60 / 60;
+              const minutes = (hours - ~~hours) * 60;
+              const seconds = (minutes - ~~minutes) * 60;
+              fse.appendFileSync(
+                `${value.filePaths[0]}\\commentsFor${req.params.id}.txt`,
+                `${name} [${~~hours}h ${~~minutes}m ${~~seconds}s]: ${message}\n`,
+                "utf8",
+                (err) => {
+                  if (err) console.log(err.message);
+                }
+              );
+            });
+          })
+          .catch(() => res.status(404).send("Bad id"))
+          .finally(() => {
+            res.status(200).end();
+          });
+      }
+    });
+});
+
+app.get("/vod/jsonchat/:id", (req, res) => {
+  electron.dialog
+    .showOpenDialog({
+      properties: ["openDirectory"],
+      defaultPath: electron.app.getPath("downloads"),
+    })
+    .then((value) => {
+      if (!value.canceled) {
+        getCommentsJson(req.params.id, 0, 10000000)
+          .then((comments) => {
+            fse.writeFile(
+              `${value.filePaths[0]}\\commentsFor${req.params.id}.json`,
+              JSON.stringify(comments),
+              "utf8",
+              (err) => {
+                if (err) console.log(err.message);
+              }
+            );
+          })
+          .catch(() => res.status(404).send("Bad id"))
+          .finally(() => {
+            res.status(200).end();
+          });
+      }
+    });
+});
+
 app.listen(PORT, () => console.log("Server is ready on " + PORT));
