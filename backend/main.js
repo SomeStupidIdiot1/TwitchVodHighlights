@@ -10,7 +10,7 @@ function createWindow() {
       nodeIntegration: false,
     },
   });
-  // if (process.env.NODE_ENV !== "development") win.removeMenu();
+  if (process.env.NODE_ENV !== "development") win.removeMenu();
 
   win.loadURL(
     process.env.NODE_ENV === "development"
