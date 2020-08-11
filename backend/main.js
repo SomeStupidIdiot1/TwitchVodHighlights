@@ -10,6 +10,7 @@ function createWindow() {
       nodeIntegration: false,
     },
   });
+  win.removeMenu();
 
   require("./app"); // Express app
   win.loadURL(
