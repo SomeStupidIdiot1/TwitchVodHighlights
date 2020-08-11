@@ -22,6 +22,10 @@ if (process.env.NODE_ENV === "development") {
 }
 app.use(express.json());
 
+app.get("/", (_, res) => {
+  res.sendFile(path.join(__dirname + "/build/index.html"));
+});
+
 app.get("/vod/vodinfo/:id", (req, res) => {
   getVodInfo(req.params.id)
     .then((vodInfo) => {
