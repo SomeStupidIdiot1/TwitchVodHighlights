@@ -7,6 +7,11 @@ import {
   CssBaseline,
   Snackbar,
   Grid,
+  TableHead,
+  TableCell,
+  Table,
+  TableBody,
+  TableRow,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
@@ -24,6 +29,11 @@ const GetHighlights = () => {
     window.localStorage.getItem("getHighlightsId") || ""
   );
   const [err, setErr] = React.useState("");
+  const [data, setData] = React.useState(
+    window.localStorage.getItem("getHighlightsData")
+      ? JSON.parse(window.localStorage.getItem("getHighlightsData"))
+      : []
+  );
 
   const getHighlightsHandler = () => {
     let id = "";
@@ -34,6 +44,11 @@ const GetHighlights = () => {
       getHighlights(id)
         .then((result) => {
           window.localStorage.setItem("getHighlightsId", id);
+          window.localStorage.setItem(
+            "getHighlightsData",
+            JSON.stringify(result.topSpeeds)
+          );
+          setData(result.topSpeeds);
         })
         .catch((err) => setErr(err.message));
     }
@@ -71,6 +86,29 @@ const GetHighlights = () => {
           </Button>
         </Grid>
       </Grid>
+      {data.length !== 0 && (
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Time</TableCell>
+              <TableCell>Messages per second</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map(({ speed, time }, index) => {
+              const hours = time / 60 / 60;
+              const minutes = (hours - ~~hours) * 60;
+              const seconds = (minutes - ~~minutes) * 60;
+              return (
+                <TableRow key={index}>
+                  <TableCell key={index}>{speed}</TableCell>
+                  <TableCell>{`${~~hours}h ${~~minutes}m ${~~seconds}s`}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      )}
       <Snackbar open={err.length !== 0} onClose={() => setErr("")}>
         <Alert severity="error" onClose={() => setErr("")}>
           {err}

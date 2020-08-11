@@ -71,7 +71,7 @@ const DownloadVod = () => {
     selectedQuality: "",
   };
   const classes = useStyles();
-  const [url, setUrl] = React.useState(oldVodInfo.vodId);
+  const [url, setUrl] = React.useState(oldVodInfo ? oldVodInfo.vodId : "");
   const [vodInfo, setVodInfo] = React.useState(oldVodInfo || defaultVodInfo);
   const [err, setErr] = React.useState("");
   const lookUp = () => {
