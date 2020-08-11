@@ -13,12 +13,12 @@ const {
   getCommentsJson,
 } = require("./twitchAPI/getComments");
 const { getChatSpeed } = require("./twitchAPI/getHighlights");
-if (process.env.NODE_ENV === "production") {
-  console.log("Production build...");
-  app.use(express.static("build"));
-} else {
+if (process.env.NODE_ENV === "development") {
   console.log("Development build...");
   app.use(cors());
+} else {
+  console.log("Production build...");
+  app.use(express.static("build"));
 }
 app.use(express.json());
 

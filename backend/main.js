@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require("electron");
 const PORT = process.env.PORT || 8080;
+require("./app"); // Express app
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -9,9 +10,8 @@ function createWindow() {
       nodeIntegration: false,
     },
   });
-  win.removeMenu();
+  if (process.env.NODE_ENV !== "development") win.removeMenu();
 
-  require("./app"); // Express app
   win.loadURL(
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
