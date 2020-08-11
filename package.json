@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"cd backend && npm run electron\" \"cd frontend && npm start\"",
-    "start": "cd backend && npm start"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -18,7 +16,5 @@
     "url": "https://github.com/SomeStupidIdiot1/TwitchVodHighlights/issues"
   },
   "homepage": "https://github.com/SomeStupidIdiot1/TwitchVodHighlights#readme",
-  "dependencies": {
-    "concurrently": "^5.2.0"
-  }
+  "dependencies": {}
 }

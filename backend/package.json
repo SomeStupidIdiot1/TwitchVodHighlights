@@ -12,7 +12,6 @@
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "electron": "^9.1.2",
-    "electron-is-dev": "^1.2.0",
     "electron-reload": "^1.5.0",
     "express": "^4.17.1",
     "fs-extra": "^9.0.1",
@@ -20,9 +19,8 @@
     "tmp": "^0.2.1"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=production node electron.js",
+    "start": "cross-env NODE_ENV=production electron .",
     "dev": "cross-env NODE_ENV=development electron .",
-    "electron": "electron .",
     "lint": "eslint ."
   },
   "devDependencies": {

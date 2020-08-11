@@ -25,7 +25,7 @@ export const getVods = async (data) => {
 };
 export const downloadMetadata = async (metadata) => {
   try {
-    if (metadata.length) await axios.post("/jsondownload", metadata);
+    if (metadata.length) await axios.post(`/jsondownload`, metadata);
   } catch (err) {
     throw new Error(`Could not download metadata`);
   }
@@ -36,21 +36,18 @@ export const downloadSimpleChat = async (id) => {
   } catch (err) {
     throw new Error(`Could not get the chat from twitch.tv/videos/${id}`);
   }
-
-}
+};
 export const downloadChatJson = async (id) => {
   try {
     return (await axios.get(`/vod/jsonchat/${id}`)).data;
   } catch (err) {
     throw new Error(`Could not get the chat from twitch.tv/videos/${id}`);
   }
-
-}
+};
 export const getHighlights = async (id) => {
   try {
     return (await axios.get(`/vod/highlights/${id}`)).data;
   } catch (err) {
     throw new Error(`Could not get highlights from twitch.tv/videos/${id}.`);
   }
-
-}
+};

@@ -1,6 +1,5 @@
 const { app, BrowserWindow } = require("electron");
-const path = require("path");
-const isDev = require("electron-is-dev");
+const PORT = process.env.PORT || 8080;
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -14,9 +13,9 @@ function createWindow() {
 
   require("./app"); // Express app
   win.loadURL(
-    isDev
+    process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
-      : `file://${path.join(__dirname, "/build/index.html")}`
+      : `http://localhost:${PORT}`
   );
 }
 app.whenReady().then(createWindow);
