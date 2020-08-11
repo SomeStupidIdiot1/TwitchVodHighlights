@@ -12,6 +12,7 @@ import {
   Table,
   TableBody,
   TableRow,
+  CircularProgress,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
@@ -34,6 +35,7 @@ const GetHighlights = () => {
       ? JSON.parse(window.localStorage.getItem("getHighlightsData"))
       : []
   );
+  const [inProgress, setInProgress] = React.useState(false);
 
   const getHighlightsHandler = () => {
     let id = "";
@@ -41,6 +43,8 @@ const GetHighlights = () => {
       if (splitItem.trim() !== "" && !isNaN(splitItem)) id = splitItem.trim();
     if (id === "") setErr("Input is badly formatted");
     else {
+      setInProgress(true);
+
       getHighlights(id)
         .then((result) => {
           window.localStorage.setItem("getHighlightsId", id);
@@ -50,7 +54,8 @@ const GetHighlights = () => {
           );
           setData(result.topSpeeds);
         })
-        .catch((err) => setErr(err.message));
+        .catch((err) => setErr(err.message))
+        .finally(() => setInProgress(false));
     }
   };
   return (
@@ -85,8 +90,11 @@ const GetHighlights = () => {
             Get Highlights
           </Button>
         </Grid>
+        <Grid item xs={12}>
+          {inProgress && <CircularProgress color="secondary" />}
+        </Grid>
       </Grid>
-      {data.length !== 0 && (
+      {!inProgress && data.length !== 0 && (
         <Table>
           <TableHead>
             <TableRow>

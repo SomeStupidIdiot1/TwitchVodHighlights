@@ -12,6 +12,7 @@ import {
   ListItemIcon,
   Checkbox,
   ListItemText,
+  CircularProgress,
 } from "@material-ui/core";
 import { getVodInfo, downloadMetadata } from "../services/vod";
 
@@ -43,8 +44,10 @@ const LookUp = () => {
   const [checked, setChecked] = React.useState(
     pastVodData ? new Array(pastVodData.length).fill(true) : []
   );
+  const [inProgress, setInProgress] = React.useState(false);
   const lookUp = () => {
     setChecked([]);
+    setInProgress(true);
     const newVodData = [];
     const newErrs = [];
     new Set(
@@ -84,6 +87,7 @@ const LookUp = () => {
         "pastVodData",
         JSON.stringify(removedDuplicates)
       );
+      setInProgress(false);
       setErrs(newErrs);
       setChecked(new Array(removedDuplicates.length).fill(true));
     });
@@ -140,6 +144,7 @@ const LookUp = () => {
             Look up
           </Button>
         </Grid>
+        <Grid item>{inProgress && <CircularProgress color="secondary" />}</Grid>
         <Grid item xs={12}>
           {vodData.length !== 0 && (
             <>

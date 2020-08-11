@@ -7,6 +7,7 @@ import {
   CssBaseline,
   Snackbar,
   Grid,
+  CircularProgress,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
@@ -23,6 +24,7 @@ const DownloadChat = () => {
     window.localStorage.getItem("downloadChatId") || ""
   );
   const [err, setErr] = React.useState("");
+  const [inProgress, setInProgress] = React.useState(false);
   const getId = () => {
     let id = "";
     for (const splitItem of url.trim().split("/"))
@@ -33,24 +35,22 @@ const DownloadChat = () => {
       return id;
     }
   };
-  const downloadSimple = async () => {
+  const downloadSimple = () => {
     const id = getId();
     if (id) {
-      try {
-        await downloadSimpleChat(id);
-      } catch (err) {
-        setErr(err.message);
-      }
+      setInProgress(true);
+      downloadSimpleChat(id)
+        .catch((err) => setErr(err.message))
+        .finally(() => setInProgress(false));
     }
   };
   const downloadJson = async () => {
     const id = getId();
     if (id) {
-      try {
-        await downloadChatJson(id);
-      } catch (err) {
-        setErr(err.message);
-      }
+      setInProgress(true);
+      downloadChatJson(id)
+        .catch((err) => setErr(err.message))
+        .finally(() => setInProgress(false));
     }
   };
   return (
@@ -83,6 +83,9 @@ const DownloadChat = () => {
           <Button variant="contained" color="primary" onClick={downloadJson}>
             Download complicated chat (JSON file)
           </Button>
+        </Grid>
+        <Grid item xs={12}>
+          {inProgress && <CircularProgress color="secondary" />}
         </Grid>
       </Grid>
       <Snackbar open={err.length !== 0} onClose={() => setErr("")}>

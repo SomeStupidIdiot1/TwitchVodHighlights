@@ -110,7 +110,7 @@ app.get("/vod/simplechat/:id", (req, res) => {
           .finally(() => {
             res.status(200).end();
           });
-      }
+      } else res.end();
     });
 });
 
@@ -138,7 +138,7 @@ app.get("/vod/jsonchat/:id", (req, res) => {
           .finally(() => {
             res.status(200).end();
           });
-      }
+      } else res.end();
     });
 });
 app.get("/vod/highlights/:id", async (req, res) => {

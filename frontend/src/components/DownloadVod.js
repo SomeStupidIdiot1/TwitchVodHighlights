@@ -15,6 +15,7 @@ import {
   FormControl,
   MenuItem,
   FormHelperText,
+  CircularProgress,
 } from "@material-ui/core";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import Alert from "@material-ui/lab/Alert";
@@ -74,12 +75,14 @@ const DownloadVod = () => {
   const [url, setUrl] = React.useState(oldVodInfo ? oldVodInfo.vodId : "");
   const [vodInfo, setVodInfo] = React.useState(oldVodInfo || defaultVodInfo);
   const [err, setErr] = React.useState("");
+  const [inProgress, setInProgress] = React.useState(false);
   const lookUp = () => {
     let id = "";
     for (const splitItem of url.trim().split("/"))
       if (splitItem.trim() !== "" && !isNaN(splitItem)) id = splitItem.trim();
     if (id === "") setErr("Input is badly formatted");
     else {
+      setInProgress(true);
       getVodInfo(id)
         .then((data) => {
           getQualities(id)
@@ -95,9 +98,11 @@ const DownloadVod = () => {
               window.localStorage.setItem("downloadVod", JSON.stringify(copy));
               setVodInfo(copy);
             })
-            .catch((e) => setErr(`${e.message}`));
+            .catch((e) => setErr(`${e.message}`))
+            .finally(() => setInProgress(false));
         })
-        .catch((e) => setErr(`${e.message}`));
+        .catch((e) => setErr(`${e.message}`))
+        .finally(() => setInProgress(false));
     }
   };
   const handleDownload = () => {
@@ -194,6 +199,7 @@ const DownloadVod = () => {
             Look up
           </Button>
         </Grid>
+        <Grid item>{inProgress && <CircularProgress color="secondary" />}</Grid>
         {vodInfo.author !== "" && (
           <Grid item xs={12}>
             <div className={classes.displayVodInfo}>
