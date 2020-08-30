@@ -34,6 +34,7 @@ const getPlaylists = async (videoId) => {
       .forEach((info, index, array) => {
         if (info.startsWith("#EXT-X-MEDIA")) {
           const firstIndex = info.indexOf("NAME") + 6;
+          // eslint-disable-next-line
           playlists[info.substring(firstIndex, info.indexOf('"', firstIndex))] =
             array[index + 1];
         }
@@ -95,7 +96,7 @@ const combineVideoClips = (
     if (i !== lastFileNum) command += `${path}\\${i}.ts|`;
     else command += `${path}\\${i}.ts"`;
   }
-  command += ` -t ${length} -c copy "${outputName}"`;
+  command += ` -analyzeduration 2000000000 -probesize 2000000000 -c copy -t ${length} "${outputName}"`;
   console.log("Running ffmpeg command: " + command);
   return new Promise((resolve, reject) => {
     exec(command, { cwd: __dirname }, (err) => {
@@ -127,7 +128,7 @@ const getPlaylistInfo = async (startTime, endTime, playlistUrl) => {
   let fileIndex = 0;
   data.forEach((item, index) => {
     if (item.startsWith("#EXTINF:")) {
-      const partLength = parseInt(
+      const partLength = parseFloat(
         item.substring(item.indexOf(":") + 1, item.length - 1)
       );
       const name = data[index + 1];
